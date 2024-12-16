@@ -45,7 +45,7 @@ class _NewExpenceState extends State<NewExpence> {
             return AlertDialog(
               title: const Text('Invalid Input'),
               content: const Text(
-                  'Please make sure that you enterd valid Title, amount, Date and Category'),
+                  'Please make sure that you entered valid Title, amount, Date and Category'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
@@ -79,88 +79,97 @@ class _NewExpenceState extends State<NewExpence> {
     super.dispose();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
-      child: Column(children: [
-        TextField(
-          controller: _titleController,
-          // onChanged: _saveTitleInput,
-          maxLength: 50,
-          decoration: const InputDecoration(
-            label: Text("Title"),
-          ),
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _amountController,
-                decoration: const InputDecoration(
-                    label: Text('Amount'), prefixText: '\$ '),
-                keyboardType: TextInputType.number,
+    final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
+    double screenWidth =MediaQuery.of(context).size.width;
+    return SizedBox(
+      height: double.infinity,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding:  EdgeInsets.fromLTRB(16, 48, 16,keyboardSpace+ 16),
+          child: Column(children: [
+            TextField(
+              controller: _titleController,
+              // onChanged: _saveTitleInput,
+              maxLength: 50,
+              decoration: const InputDecoration(
+                label: Text("Title"),
               ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _amountController,
+                    decoration: const InputDecoration(
+                        label: Text('Amount'), prefixText: '\$ '),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                 SizedBox(
+                  width:screenWidth*0.05 ,
+                ),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(_selectedDate == null
+                          ? 'No selected Date'
+                          : formatter.format(_selectedDate!),style: const TextStyle(fontSize: 10),),
+                      IconButton(
+                        onPressed: _presentDatePicker,
+                        icon: const Icon(Icons.calendar_month),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
             const SizedBox(
-              width: 16,
+              height: 16,
             ),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(_selectedDate == null
-                      ? 'No selected Date'
-                      : formatter.format(_selectedDate!)),
-                  IconButton(
-                    onPressed: _presentDatePicker,
-                    icon: const Icon(Icons.calendar_month),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 16,
-        ),
-        Row(
-          children: [
-            DropdownButton(
-              value: _selectedCategory,
-              items: Category.values
-                  .map(
-                    (category) => DropdownMenuItem(
-                      value: category,
-                      child: Text(category.name.toUpperCase()),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (value) {
-                if (value == null) {
-                  return;
-                }
+            Row(
+              children: [
+                DropdownButton(
+                  value: _selectedCategory,
+                  items: Category.values
+                      .map(
+                        (category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(category.name.toUpperCase()),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value == null) {
+                      return;
+                    }
 
-                setState(() {
-                  _selectedCategory = value;
-                });
-                print(value);
-              },
+                    setState(() {
+                      _selectedCategory = value;
+                    });
+
+                  },
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                    onPressed: _submitExpenseDate,
+                    child: const Text('Save Expense')),
+              ],
             ),
-            const Spacer(),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-                onPressed: _submitExpenseDate,
-                child: const Text('Save Expence')),
-          ],
+          ]),
         ),
-      ]),
+      ),
     );
   }
 }
